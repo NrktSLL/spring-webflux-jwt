@@ -56,3 +56,7 @@ mvn test
 ## Redis Commander
 > **Access : http://localhost:8081/**
 
+## Resource
+* https://jwt.io/
+* https://ard333.medium.com/authentication-and-authorization-using-jwt-on-spring-webflux-29b81f813e78
+* https://www.baeldung.com/problem-spring-web
