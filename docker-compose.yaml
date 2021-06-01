@@ -1,0 +1,104 @@
+version: '3.8'
+
+services:
+  webflux_jwt:
+    image: spring-webflux-jwt:0.0.1
+    container_name: webflux-jwt
+    restart: ${RESTART_POLICY}
+    environment:
+      - MDB_USER
+      - MDB_PASSWORD
+      - MONGO_URI
+      - MONGO_PORT
+      - DB_NAME
+      - REDIS_HOST
+      - REDIS_PORT
+      - JWT_SECRET
+      - JWT_EXPIRATION_MS
+      - JWT_ISSUER
+    ports:
+      - 8080:8080
+
+  mongodb-primary:
+    image: bitnami/mongodb:${MONGO_IMAGE_TAG}
+    container_name: mongodb-primary
+    restart: ${RESTART_POLICY}
+    environment:
+      - TZ
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-primary
+      - MONGODB_REPLICA_SET_MODE=primary
+      - MONGODB_REPLICA_SET_NAME
+      - MONGODB_REPLICA_SET_KEY
+      - MONGODB_ROOT_PASSWORD
+    volumes:
+      - mongo_data:/bitnami/mongodb
+    ports:
+      - 27017:27017
+
+  mongodb-secondary:
+    image: bitnami/mongodb:${MONGO_IMAGE_TAG}
+    container_name: mongodb-secondary
+    restart: ${RESTART_POLICY}
+    environment:
+      - TZ
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-secondary
+      - MONGODB_REPLICA_SET_MODE=secondary
+      - MONGODB_REPLICA_SET_NAME
+      - MONGODB_REPLICA_SET_KEY
+      - MONGODB_INITIAL_PRIMARY_HOST
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD
+    ports:
+      - 27027:27017
+
+  mongodb-arbiter:
+    image: bitnami/mongodb:${MONGO_IMAGE_TAG}
+    container_name: mongodb-arbiter
+    restart: ${RESTART_POLICY}
+    environment:
+      - TZ
+      - MONGODB_ADVERTISED_HOSTNAME=mongodb-arbiter
+      - MONGODB_REPLICA_SET_MODE=arbiter
+      - MONGODB_REPLICA_SET_NAME
+      - MONGODB_REPLICA_SET_KEY
+      - MONGODB_INITIAL_PRIMARY_HOST
+      - MONGODB_INITIAL_PRIMARY_PORT_NUMBER
+      - MONGODB_INITIAL_PRIMARY_ROOT_PASSWORD
+    ports:
+      - 27037:27017
+
+  mongo-express:
+    image: mongo-express:${MONGO_EXPRESS_IMAGE_TAG}
+    container_name: mongo-express
+    restart: ${RESTART_POLICY}
+    environment:
+      - ME_CONFIG_MONGODB_SERVER
+      - ME_CONFIG_MONGODB_ADMINUSERNAME
+      - ME_CONFIG_MONGODB_ADMINPASSWORD
+      - ME_CONFIG_BASICAUTH_USERNAME
+      - ME_CONFIG_BASICAUTH_PASSWORD
+      - VCAP_APP_PORT
+    ports:
+      - 8085:8085
+
+  redis:
+    image: redis:${REDIS_IMAGE_TAG}
+    container_name: redis
+    restart: ${RESTART_POLICY}
+    ports:
+      - 6379:6379
+
+  redis-commander:
+    container_name: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: ${RESTART_POLICY}
+    environment:
+      - REDIS_HOSTS
+      - PORT
+      - HTTP_USER
+      - HTTP_PASSWORD
+    ports:
+      - 8081:8081
+
+volumes:
+  mongo_data:

@@ -1,0 +1,19 @@
+{
+  "properties": [
+    {
+      "name": "jwt.expiration.ms",
+      "type": "java.lang.String",
+      "description": "Refers to the token expiration time and must be specified in milliseconds."
+    },
+    {
+      "name": "jwt.secret",
+      "type": "java.lang.String",
+      "description": "Specifies the JWT Secret value ."
+    },
+    {
+      "name": "jwt.issuer",
+      "type": "java.lang.String",
+      "description": "Specifies the JWT Issuer ."
+    }
+  ]
+}
