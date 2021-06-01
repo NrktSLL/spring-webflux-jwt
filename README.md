@@ -43,6 +43,7 @@ mvn test
 ## Abilities
 * JWT
 * Reactive Audit
+* Authentication and Authorization
 * Zalando Problem
 
 ## Swagger
