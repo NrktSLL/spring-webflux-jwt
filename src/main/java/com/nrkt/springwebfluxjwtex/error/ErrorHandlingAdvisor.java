@@ -27,7 +27,7 @@ import static org.springframework.http.HttpStatus.*;
 
 @RestControllerAdvice
 @Slf4j
-public class ErrorHandling implements ProblemHandling, SecurityAdviceTrait {
+public class ErrorHandlingAdvisor implements ProblemHandling, SecurityAdviceTrait {
 
     @Override
     @ExceptionHandler(AccessDeniedException.class)
