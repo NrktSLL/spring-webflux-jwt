@@ -13,7 +13,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,10 +29,11 @@ import java.util.List;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Slf4j
 @Transactional
-public class ReactiveUserService{
+public class ReactiveUserService {
 
     ReactiveUserRepository reactiveUserRepository;
     UserMapper userMapper;
+    RedisTemplate<String, String> redisTemplate;
 
     /**
      * Create new user.
@@ -121,14 +124,18 @@ public class ReactiveUserService{
      * Changing the active status of users
      *
      * @param id     user id.
-     * @param active user status. (TRUE,FALSE)
+     * @param status user status. (TRUE,FALSE)
      * @return a completed {@link Mono}.
      * @throws UsernameNotFoundException If there is no such user, it will generate such an error.
      */
-    public Mono<Void> editStatus(String id, Boolean active) {
+    public Mono<Void> editStatus(String id, Boolean status) {
         return validateAuditor(id)
                 .then(findUser(id).map(user -> {
-                    user.setActive(active);
+                    user.setActive(status);
+                    if (Boolean.FALSE.equals(user.getActive())) {
+                        Mono.just(ReactiveSecurityContextHolder.clearContext());
+                        redisTemplate.delete(user.getUsername());
+                    }
                     return user;
                 }).flatMap(reactiveUserRepository::save).then().log());
     }

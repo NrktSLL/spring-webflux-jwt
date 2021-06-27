@@ -67,11 +67,18 @@ public class TokenProvider {
     }
 
     public Boolean validateJwtToken(String token) {
+        var exitToken = redisTemplate.opsForValue().get(getId(token));
+        if (exitToken == null) return false;
+
         return !getClaimsFromToken(token).isEmpty();
     }
 
     public String getSubject(String token) {
         return getClaimsFromToken(token).getSubject();
+    }
+
+    public String getId(String token) {
+        return getClaimsFromToken(token).getId();
     }
 
     public Date getExpirationDate(String token) {
@@ -98,6 +105,7 @@ public class TokenProvider {
         final var expirationDate = new Date(createdDate.getTime() + jwtExpirationMs);
 
         var token = Jwts.builder()
+                .setId(user.getUsername())
                 .setSubject(user.getEmail())
                 .setIssuer(issuer)
                 .setIssuedAt(createdDate)
@@ -109,7 +117,7 @@ public class TokenProvider {
 
         var duration = Duration.between(createdDate.toInstant(), expirationDate.toInstant());
 
-        redisTemplate.opsForValue().set(user.getId(), token, duration);
+        redisTemplate.opsForValue().set(user.getUsername(), token, duration);
 
         return token;
     }
