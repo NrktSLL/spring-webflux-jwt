@@ -1,5 +1,6 @@
 package com.nrkt.springwebfluxjwtex.payload.response;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Builder
+@JsonInclude(value = JsonInclude.Include.NON_NULL, valueFilter = UserResponseDTO.class)
 public class UserResponseDTO implements Serializable {
     @JsonProperty("id")
     @Schema(name = "id", required = true)

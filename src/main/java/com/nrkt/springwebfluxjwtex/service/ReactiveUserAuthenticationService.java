@@ -24,7 +24,7 @@ import reactor.core.publisher.Mono;
 
 import javax.annotation.Nonnull;
 
-@Service
+@Service("userAuthenticationService")
 @RequiredArgsConstructor
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 @Validated

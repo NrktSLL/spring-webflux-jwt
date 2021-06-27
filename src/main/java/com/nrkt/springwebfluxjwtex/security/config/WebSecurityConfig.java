@@ -56,7 +56,7 @@ public class WebSecurityConfig {
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/actuator/**").permitAll()
                 .pathMatchers("/v1/login/**").permitAll()
-                .pathMatchers(HttpMethod.PATCH, "/v1/users/status/**").hasAnyRole("ADMIN", "USER")
+                .pathMatchers(HttpMethod.PATCH, "/v1/users/status/**").hasAnyRole("USER")
                 .pathMatchers(HttpMethod.POST, "/v1/users/**").permitAll()
                 .pathMatchers(HttpMethod.PUT, "/v1/users/**").hasAnyRole("ADMIN", "USER")
                 .pathMatchers("/v1/users/**").hasAnyRole("ADMIN")

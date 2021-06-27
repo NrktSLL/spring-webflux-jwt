@@ -46,19 +46,16 @@ public class User extends AuditModel implements UserDetails {
     transient List<UserRole> userRole;
 
     @Override
-    @Deprecated
     public boolean isAccountNonExpired() {
         return true;
     }
 
     @Override
-    @Deprecated
     public boolean isCredentialsNonExpired() {
         return true;
     }
 
     @Override
-    @Deprecated
     public boolean isAccountNonLocked() {
         return true;
     }

@@ -47,10 +47,21 @@ public class ErrorHandling implements ProblemHandling, SecurityAdviceTrait {
     }
 
     @ExceptionHandler({
-            UserInformationWrongException.class,
             UsernameNotFoundException.class,
-            UserNotActiveException.class,
             UserNotFoundException.class})
+    @ApiResponse(responseCode = "400", content = @Content(schema = @Schema(implementation = ErrorDetail.class)))
+    @ResponseStatus(NOT_FOUND)
+    public Mono<ResponseEntity<Problem>> notFoundExceptionHandler(Exception notFoundExceptionException, ServerWebExchange request) {
+        var problem =
+                ProblemBuilder.createProblem("User", notFoundExceptionException.getMessage(), notFoundExceptionException, Status.NOT_FOUND);
+
+        LogErrorUtils.errorLogger(problem, request);
+        return create(notFoundExceptionException, request);
+    }
+
+    @ExceptionHandler({
+            UserInformationWrongException.class,
+            UserNotActiveException.class})
     @ApiResponse(responseCode = "401", content = @Content(schema = @Schema(implementation = ErrorDetail.class)))
     @ResponseStatus(UNAUTHORIZED)
     public Mono<ResponseEntity<Problem>> userAuthenticationHandler(Exception userInformationException, ServerWebExchange request) {
